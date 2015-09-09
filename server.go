@@ -14,21 +14,15 @@ type Fin struct {
 	T string
 }
 
-
-
-
-
-
-
 type Arith2 []byte
 
 
-func (t *Arith2) Readi(arg* Fin, reply *string) error{
+func (t *Arith2) Readi(arg* Fin, reply *[]byte) error{
     data, err := ioutil.ReadFile(arg.T)
       if err!=nil{
           return nil
       }
-	  *reply = string(data)
+		*reply = data
 
      return nil
 }

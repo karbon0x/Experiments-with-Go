@@ -5,16 +5,12 @@ import (
     "log"
     "net/rpc"
     "os"
-
+    "strings"
 )
 
 type Fin struct {
 	T string
 }
-
-
-
-
 
 func main() {
     if len(os.Args) != 2 {
@@ -23,21 +19,21 @@ func main() {
     }
 
     serverAddress := os.Args[1]
-
     client, err := rpc.DialHTTP("tcp", serverAddress+":1234")
     if err != nil {
         log.Fatal("dialing:", err)
     }
 
-for 1>0 {
-var A string
+var A[]byte
 arg := Fin{"client.go"}
     err = client.Call("Arith2.Readi", arg, &A)
 if err != nil {
      log.Fatal("Read error", err)
  }
- fmt.Println(A)
-
+str := strings.Split(string(A),"\n")
+for i := 0; i < len(str); i++ {
+    if strings.Contains(str[i], "le"){
+        fmt.Println(str[i])
+    }
 }
-
 }

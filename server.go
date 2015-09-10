@@ -2,10 +2,11 @@ package main
 
 import (
 
-	"fmt"
+
 	"io/ioutil"
-	"net/http"
+	"net"
 	"net/rpc"
+	"log"
 
 )
 
@@ -30,12 +31,16 @@ func (t *Arith2) Readi(arg* Fin, reply *[]byte) error{
 func main() {
 
 	arith2 := new(Arith2)
-
 	rpc.Register(arith2)
-	rpc.HandleHTTP()
-
-	err := http.ListenAndServe(":1234", nil)
-	if err != nil {
-		fmt.Println(err.Error())
+	l, e := net.Listen("tcp", ":1234")
+	if e != nil {
+	    log.Fatal("listen error:", e)
 	}
+	    for {
+	        conn, err := l.Accept()
+			 if err != nil {
+			    log.Fatal("listen error:", err)
+			}
+			rpc.ServeConn(conn)
+	    }
 }

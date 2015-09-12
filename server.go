@@ -1,31 +1,34 @@
 package main
 
 import (
-
-
-	"io/ioutil"
 	"net"
 	"net/rpc"
 	"log"
-
+	"fmt"
+	//"io/ioutil"
+	"os/exec"
 )
 
-
 type Fin struct {
-	T string
+	T,T2 string
 }
 
 type Arith2 []byte
 
 
 func (t *Arith2) Readi(arg* Fin, reply *[]byte) error{
-    data, err := ioutil.ReadFile(arg.T)
-      if err!=nil{
-          return nil
-      }
-		*reply = data
+	var err error
+	fmt.Println(arg.T2)
 
-     return nil
+	cmd := exec.Command("grep", arg.T2, arg.T)
+
+	*reply, err = cmd.Output()
+    //data, err := ioutil.ReadFile(arg.T)
+    if err!=nil{
+        return nil
+    }
+	//*reply = data
+    return nil
 }
 
 func main() {

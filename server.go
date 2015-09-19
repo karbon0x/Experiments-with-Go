@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
-	"net/rpc"
 	//"io/ioutil"
+	"net/http"
+
+	"net/rpc"
 	"os/exec"
+	//"bytes"
 )
 
 type Fin struct {
@@ -17,32 +18,26 @@ type Arith2 []byte
 
 func (t *Arith2) Readi(arg *Fin, reply *[]byte) error {
 	var err error
-	fmt.Println(arg.T2)
-
+	fmt.Println(arg.T)
+	//TODO add file argument for grep function
 	cmd := exec.Command("grep", arg.T2, arg.T)
-
 	*reply, err = cmd.Output()
-	//data, err := ioutil.ReadFile(arg.T)
+	//	fmt.Println(string(*reply))
 	if err != nil {
-		return nil
+		return err
 	}
-	//*reply = data
 	return nil
 }
 
 func main() {
 
 	arith2 := new(Arith2)
+
 	rpc.Register(arith2)
-	l, e := net.Listen("tcp", ":1234")
-	if e != nil {
-		log.Fatal("listen error:", e)
-	}
-	for {
-		conn, err := l.Accept()
-		if err != nil {
-			log.Fatal("listen error:", err)
-		}
-		rpc.ServeConn(conn)
+	rpc.HandleHTTP()
+
+	err := http.ListenAndServe(":1235", nil)
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 }

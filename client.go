@@ -2,39 +2,42 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
+	//"io/ioutil"
+	"net/http"
+
 	"net/rpc"
-	"os"
+	"os/exec"
+	//"bytes"
 )
 
 type Fin struct {
 	T, T2 string
 }
 
+type Arith2 []byte
+
+func (t *Arith2) Readi(arg *Fin, reply *[]byte) error {
+	var err error
+	fmt.Println(arg.T)
+	//TODO add file argument for grep function
+	cmd := exec.Command("grep", arg.T2, arg.T)
+	*reply, err = cmd.Output()
+	//	fmt.Println(string(*reply))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: ", os.Args[0], "server")
-		os.Exit(1)
-	}
 
-	serverAddress := os.Args[1]
-	client, err := rpc.Dial("tcp", serverAddress+":1234")
-	if err != nil {
-		log.Fatal("dialing:", err)
-	}
-	var input string
-	fmt.Scanln(&input)
-	fmt.Print(input)
-	var input2 string
-	fmt.Scanln(&input2)
-	fmt.Print(input2)
-	var A []byte
+	arith2 := new(Arith2)
 
-	arg := Fin{input, input2}
-	err = client.Call("Arith2.Readi", arg, &A)
+	rpc.Register(arith2)
+	rpc.HandleHTTP()
+
+	err := http.ListenAndServe(":1235", nil)
 	if err != nil {
-		log.Fatal("Read error", err)
+		fmt.Println(err.Error())
 	}
-	i
 }
